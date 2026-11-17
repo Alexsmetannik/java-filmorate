@@ -22,10 +22,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        validateLogin(user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        resolveName(user);
         user.setId(idCounter.incrementAndGet());
         users.put(user.getId(), user);
         log.info("Создан пользователь: id={}, login={}", user.getId(), user.getLogin());
@@ -40,10 +37,7 @@ public class UserController {
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден");
         }
-        validateLogin(user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        resolveName(user);
         users.put(user.getId(), user);
         log.info("Обновлён пользователь: id={}, login={}", user.getId(), user.getLogin());
         return user;
@@ -54,11 +48,9 @@ public class UserController {
         return new ArrayList<>(users.values());
     }
 
-    private void validateLogin(User user) {
-        if (user.getLogin() != null && user.getLogin().contains(" ")) {
-            String msg = "Логин не может содержать пробелы";
-            log.warn("Ошибка валидации пользователя: {}", msg);
-            throw new ValidationException(msg);
+    private void resolveName(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
     }
 }

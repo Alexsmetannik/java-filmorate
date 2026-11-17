@@ -22,7 +22,6 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        validateReleaseDate(film);
         film.setId(idCounter.incrementAndGet());
         films.put(film.getId(), film);
         log.info("Добавлен фильм: id={}, name={}", film.getId(), film.getName());
@@ -37,7 +36,6 @@ public class FilmController {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Фильм с id=" + film.getId() + " не найден");
         }
-        validateReleaseDate(film);
         films.put(film.getId(), film);
         log.info("Обновлён фильм: id={}, name={}", film.getId(), film.getName());
         return film;
@@ -46,14 +44,5 @@ public class FilmController {
     @GetMapping
     public List<Film> getAllFilms() {
         return new ArrayList<>(films.values());
-    }
-
-    private void validateReleaseDate(Film film) {
-        if (film.getReleaseDate() != null
-                && film.getReleaseDate().isBefore(Film.MIN_RELEASE_DATE)) {
-            String msg = "Дата релиза не может быть раньше " + Film.MIN_RELEASE_DATE;
-            log.warn("Ошибка валидации фильма: {}", msg);
-            throw new ValidationException(msg);
-        }
     }
 }

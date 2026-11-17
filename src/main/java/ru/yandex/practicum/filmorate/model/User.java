@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.yandex.practicum.filmorate.validation.NoSpaces;
 
 import java.time.LocalDate;
 
@@ -23,6 +24,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "Логин не может быть пустым")
+    @NoSpaces(message = "Логин не может содержать пробелы")
     private String login;
 
     private String name;

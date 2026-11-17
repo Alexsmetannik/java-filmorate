@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.yandex.practicum.filmorate.validation.ReleaseDateValid;
 
 import java.time.LocalDate;
 
@@ -19,8 +20,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Film {
-    public static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-
     private Integer id;
 
     @NotBlank(message = "Название фильма не может быть пустым")
@@ -30,6 +29,7 @@ public class Film {
     private String description;
 
     @NotNull(message = "Дата релиза обязательна")
+    @ReleaseDateValid
     private LocalDate releaseDate;
 
     @NotNull(message = "Продолжительность обязательна")

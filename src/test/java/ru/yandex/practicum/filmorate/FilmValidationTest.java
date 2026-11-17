@@ -76,7 +76,14 @@ public class FilmValidationTest {
     @Test
     void releaseDateExactlyMinIsValid() {
         Film film = validFilm();
-        film.setReleaseDate(Film.MIN_RELEASE_DATE);
+        film.setReleaseDate(LocalDate.of(1895, 12, 28));
         assertTrue(validator.validate(film).isEmpty());
+    }
+
+    @Test
+    void releaseDateOneDayBeforeMinIsInvalid() {
+        Film film = validFilm();
+        film.setReleaseDate(LocalDate.of(1895, 12, 27));
+        assertFalse(validator.validate(film).isEmpty());
     }
 }
