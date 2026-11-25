@@ -18,25 +18,34 @@ public class UserService {
     private final UserStorage userStorage;
 
     public User createUser(User user) {
+        log.debug("UserService.createUser — вход: {}", user);
         resolveName(user);
-        return userStorage.add(user);
+        User created = userStorage.add(user);
+        log.debug("UserService.createUser — сохранён id={}", created.getId());
+        return created;
     }
 
     public User updateUser(User user) {
+        log.debug("UserService.updateUser — вход: {}", user);
         requireUser(user.getId());
         resolveName(user);
-        return userStorage.update(user);
+        User updated = userStorage.update(user);
+        log.debug("UserService.updateUser — обновлён id={}", updated.getId());
+        return updated;
     }
 
     public List<User> getAllUsers() {
+        log.debug("UserService.getAllUsers — запрос всех пользователей");
         return userStorage.findAll();
     }
 
     public User getUserById(Long id) {
+        log.debug("UserService.getUserById — id={}", id);
         return requireUser(id);
     }
 
     public void addFriend(Long userId, Long friendId) {
+        log.debug("UserService.addFriend — userId={}, friendId={}", userId, friendId);
         User user = requireUser(userId);
         User friend = requireUser(friendId);
 
@@ -46,6 +55,7 @@ public class UserService {
     }
 
     public void removeFriend(Long userId, Long friendId) {
+        log.debug("UserService.removeFriend — userId={}, friendId={}", userId, friendId);
         User user = requireUser(userId);
         User friend = requireUser(friendId);
 
@@ -55,6 +65,7 @@ public class UserService {
     }
 
     public List<User> getFriends(Long userId) {
+        log.debug("UserService.getFriends — userId={}", userId);
         User user = requireUser(userId);
         return user.getFriends().stream()
                 .map(this::requireUser)
@@ -62,12 +73,14 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(Long userId, Long otherId) {
+        log.debug("UserService.getCommonFriends — userId={}, otherId={}", userId, otherId);
         User user = requireUser(userId);
         User other = requireUser(otherId);
 
         Set<Long> commonIds = user.getFriends().stream()
                 .filter(other.getFriends()::contains)
                 .collect(Collectors.toSet());
+        log.debug("UserService.getCommonFriends — найдено {} общих id", commonIds.size());
 
         return commonIds.stream()
                 .map(this::requireUser)
@@ -76,12 +89,16 @@ public class UserService {
 
     private void resolveName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
+            log.debug("UserService.resolveName — имя пустое, подставляем логин '{}'", user.getLogin());
             user.setName(user.getLogin());
         }
     }
 
     private User requireUser(Long id) {
         return userStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
+                .orElseThrow(() -> {
+                    log.debug("UserService.requireUser — пользователь id={} не найден", id);
+                    return new NotFoundException("Пользователь с id=" + id + " не найден");
+                });
     }
 }

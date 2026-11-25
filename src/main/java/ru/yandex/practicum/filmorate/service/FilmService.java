@@ -19,23 +19,32 @@ public class FilmService {
     private final UserStorage userStorage;
 
     public Film addFilm(Film film) {
-        return filmStorage.add(film);
+        log.debug("FilmService.addFilm — вход: {}", film);
+        Film created = filmStorage.add(film);
+        log.debug("FilmService.addFilm — сохранён id={}", created.getId());
+        return created;
     }
 
     public Film updateFilm(Film film) {
+        log.debug("FilmService.updateFilm — вход: {}", film);
         requireFilm(film.getId());
-        return filmStorage.update(film);
+        Film updated = filmStorage.update(film);
+        log.debug("FilmService.updateFilm — обновлён id={}", updated.getId());
+        return updated;
     }
 
     public List<Film> getAllFilms() {
+        log.debug("FilmService.getAllFilms — запрос всех фильмов");
         return filmStorage.findAll();
     }
 
     public Film getFilmById(Integer id) {
+        log.debug("FilmService.getFilmById — id={}", id);
         return requireFilm(id);
     }
 
     public void addLike(Integer filmId, Long userId) {
+        log.debug("FilmService.addLike — filmId={}, userId={}", filmId, userId);
         Film film = requireFilm(filmId);
         requireUser(userId);
 
@@ -48,6 +57,7 @@ public class FilmService {
     }
 
     public void removeLike(Integer filmId, Long userId) {
+        log.debug("FilmService.removeLike — filmId={}, userId={}", filmId, userId);
         Film film = requireFilm(filmId);
         requireUser(userId);
 
@@ -60,6 +70,7 @@ public class FilmService {
 
     public List<Film> getPopularFilms(Integer count) {
         int limit = (count == null || count <= 0) ? 10 : count;
+        log.debug("FilmService.getPopularFilms — count={}, итоговый limit={}", count, limit);
         return filmStorage.findAll().stream()
                 .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
                 .limit(limit)
@@ -68,11 +79,17 @@ public class FilmService {
 
     private Film requireFilm(Integer id) {
         return filmStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
+                .orElseThrow(() -> {
+                    log.debug("FilmService.requireFilm — фильм id={} не найден", id);
+                    return new NotFoundException("Фильм с id=" + id + " не найден");
+                });
     }
 
     private void requireUser(Long id) {
         userStorage.findById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
+                .orElseThrow(() -> {
+                    log.debug("FilmService.requireUser — пользователь id={} не найден", id);
+                    return new NotFoundException("Пользователь с id=" + id + " не найден");
+                });
     }
 }
