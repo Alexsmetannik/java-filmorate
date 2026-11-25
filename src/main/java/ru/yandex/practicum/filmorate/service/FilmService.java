@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     public Film addFilm(Film film) {
         return filmStorage.add(film);
@@ -33,8 +35,10 @@ public class FilmService {
         return requireFilm(id);
     }
 
-    public void addLike(Integer filmId, Integer userId) {
+    public void addLike(Integer filmId, Long userId) {
         Film film = requireFilm(filmId);
+        requireUser(userId);
+
         boolean added = film.getLikes().add(userId);
         if (added) {
             log.info("Пользователь id={} поставил лайк фильму id={}", userId, filmId);
@@ -43,8 +47,10 @@ public class FilmService {
         }
     }
 
-    public void removeLike(Integer filmId, Integer userId) {
+    public void removeLike(Integer filmId, Long userId) {
         Film film = requireFilm(filmId);
+        requireUser(userId);
+
         if (film.getLikes().remove(userId)) {
             log.info("Пользователь id={} убрал лайк у фильма id={}", userId, filmId);
         } else {
@@ -63,5 +69,10 @@ public class FilmService {
     private Film requireFilm(Integer id) {
         return filmStorage.findById(id)
                 .orElseThrow(() -> new NotFoundException("Фильм с id=" + id + " не найден"));
+    }
+
+    private void requireUser(Long id) {
+        userStorage.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
     }
 }

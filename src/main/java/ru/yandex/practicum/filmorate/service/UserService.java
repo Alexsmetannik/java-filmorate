@@ -38,10 +38,10 @@ public class UserService {
 
     public void addFriend(Long userId, Long friendId) {
         User user = requireUser(userId);
-        requireUser(friendId);
+        User friend = requireUser(friendId);
 
         user.getFriends().add(friendId);
-        requireUser(friendId).getFriends().add(userId);
+        friend.getFriends().add(userId);
         log.info("Пользователь id={} добавил в друзья id={}", userId, friendId);
     }
 

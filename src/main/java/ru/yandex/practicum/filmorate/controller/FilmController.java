@@ -14,6 +14,7 @@ import java.util.List;
 @RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
+
     private final FilmService filmService;
 
     @PostMapping
@@ -41,17 +42,18 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable Integer id, @PathVariable Integer userId) {
+    public void addLike(@PathVariable Integer id, @PathVariable Long userId) {
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void removeLike(@PathVariable Integer id, @PathVariable Integer userId) {
+    public void removeLike(@PathVariable Integer id, @PathVariable Long userId) {
         filmService.removeLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
+    public List<Film> getPopularFilms(
+            @RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
         return filmService.getPopularFilms(count);
     }
 }
