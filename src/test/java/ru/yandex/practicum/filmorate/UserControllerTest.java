@@ -111,7 +111,7 @@ public class UserControllerTest {
     @Test
     void updateNonExistingUserReturns404() throws Exception {
         User user = validUser();
-        user.setId(999_999);
+        user.setId(999_999L);
         mockMvc.perform(put("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
