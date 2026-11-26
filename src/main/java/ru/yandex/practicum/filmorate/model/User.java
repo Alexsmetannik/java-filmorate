@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validation.NoSpaces;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Email не может быть пустым")
     @Email(message = "Email должен содержать символ @ и быть корректным")
@@ -32,4 +34,7 @@ public class User {
     @NotNull(message = "Дата рождения обязательна")
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
+
+    @Builder.Default
+    private Set<Long> friends = new HashSet<>();
 }

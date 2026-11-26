@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validation.ReleaseDateValid;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -35,4 +37,7 @@ public class Film {
     @NotNull(message = "Продолжительность обязательна")
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private Integer duration;
+
+    @Builder.Default
+    private Set<Long> likes = new HashSet<>();
 }
