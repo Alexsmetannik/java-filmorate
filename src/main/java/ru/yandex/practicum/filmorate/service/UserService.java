@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -46,6 +47,12 @@ public class UserService {
 
     public void addFriend(Long userId, Long friendId) {
         log.debug("UserService.addFriend — userId={}, friendId={}", userId, friendId);
+
+        if (userId.equals(friendId)) {
+            throw new ValidationException(
+                    "Нельзя добавить пользователя в друзья самому себе: id=" + userId);
+        }
+
         User user = requireUser(userId);
         User friend = requireUser(friendId);
 

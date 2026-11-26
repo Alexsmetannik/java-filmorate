@@ -72,7 +72,7 @@ public class FilmService {
         int limit = (count == null || count <= 0) ? 10 : count;
         log.debug("FilmService.getPopularFilms — count={}, итоговый limit={}", count, limit);
         return filmStorage.findAll().stream()
-                .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
+                .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed().thenComparing(Film::getId))
                 .limit(limit)
                 .toList();
     }
